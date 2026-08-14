@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>愛心鐵馬報修</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- 標題 -->
+        <h1>🚲 愛心鐵馬報修</h1>
+
+        <p class="subtitle">
+            感謝您協助維護愛心鐵馬
+        </p>
+
+        <!-- 腳踏車 ID -->
+        <div class="card">
+
+            <h2>腳踏車專屬 ID</h2>
+
+            <div id="bike-id" class="bike-id">
+                載入中...
+            </div>
+
+        </div>
+
+
+        <!-- 報修項目 -->
+        <div class="card">
+
+            <h2>請選擇需要報修的零件</h2>
+
+            <div class="repair-list">
+
+                <label class="repair-item">
+                    <input type="checkbox" value="輪胎">
+                    <span>輪胎</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="煞車線">
+                    <span>煞車線</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="鏈條">
+                    <span>鏈條</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="車架">
+                    <span>車架</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="座椅">
+                    <span>座椅</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="踏板">
+                    <span>踏板</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="車輪">
+                    <span>車輪</span>
+                </label>
+
+                <label class="repair-item">
+                    <input type="checkbox" value="車燈">
+                    <span>車燈</span>
+                </label>
+
+                <div class="other-repair">
+
+    <label class="repair-item">
+        <input
+            type="checkbox"
+            id="other-checkbox"
+            value="其他"
+        >
+
+        <span>其他</span>
+    </label>
+
+
+    <input
+        type="text"
+        id="other-input"
+        class="other-input"
+        placeholder="請輸入其他需要報修的項目..."
+    >
+
+</div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 錯誤訊息 -->
+        <div id="error-message" class="error-message"></div>
+
+
+        <!-- 確認按鈕 -->
+        <button id="submit-button" class="submit-button">
+            確認送出
+        </button>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

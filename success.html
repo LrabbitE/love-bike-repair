@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>報修成功 - 愛心鐵馬</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <div class="card success-card">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h1>
+                報修成功！
+            </h1>
+
+            <p>
+                您的腳踏車報修已成功送出
+            </p>
+
+            <div class="success-info">
+
+                <p>
+                    <strong>腳踏車 ID</strong>
+                </p>
+
+                <div id="success-bike-id"
+                    class="bike-id">
+                    載入中...
+                </div>
+
+
+                <p>
+                    <strong>報修項目</strong>
+                </p>
+
+                <div id="success-parts"
+                    class="parts-box">
+                    載入中...
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // 取得網址參數
+        const params =
+            new URLSearchParams(window.location.search);
+
+
+        // 取得腳踏車 ID
+        const bike =
+            params.get("bike");
+
+
+        // 取得報修項目
+        const parts =
+            params.get("parts");
+
+
+        // 顯示腳踏車 ID
+        document.getElementById(
+            "success-bike-id"
+        ).textContent =
+            bike || "未知";
+
+
+        // 顯示報修項目
+        document.getElementById(
+            "success-parts"
+        ).textContent =
+            parts
+                ? parts.replaceAll(",", "、")
+                : "未知";
+
+    </script>
+
+</body>
+
+</html>
