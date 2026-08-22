@@ -27,6 +27,12 @@ const bikeId =
     urlParams.get("bike");
 
 
+console.log("================================");
+console.log("Supabase 初始化完成");
+console.log("Supabase URL:", SUPABASE_URL);
+console.log("Bike ID:", bikeId);
+console.log("================================");
+
 // ========================================
 // 顯示腳踏車 ID
 // ========================================
