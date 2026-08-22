@@ -1,9 +1,55 @@
-// ===============================
+// ========================================
+// Supabase 設定
+// ========================================
+
+const SUPABASE_URL =
+    "https://lrqdbwrjnzxncmqcfqdn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_vK-p3gPhpKtcAnsaKX_UDA__l1k-OK7";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+// ========================================
 // 取得網址中的腳踏車 ID
-// ===============================
-// ===============================
-// 「其他」輸入框控制
-// ===============================
+// ========================================
+
+const urlParams =
+    new URLSearchParams(window.location.search);
+
+const bikeId =
+    urlParams.get("bike");
+
+
+// ========================================
+// 顯示腳踏車 ID
+// ========================================
+
+const bikeIdElement =
+    document.getElementById("bike-id");
+
+
+if (bikeId) {
+
+    bikeIdElement.textContent = bikeId;
+
+} else {
+
+    bikeIdElement.textContent =
+        "找不到腳踏車 ID";
+
+}
+
+
+// ========================================
+// 「其他」輸入框
+// ========================================
 
 const otherCheckbox =
     document.getElementById("other-checkbox");
@@ -12,141 +58,313 @@ const otherInput =
     document.getElementById("other-input");
 
 
+// 一開始先隱藏「其他」輸入框
+otherInput.style.display = "none";
+
+
 // 勾選 / 取消「其他」
-otherCheckbox.addEventListener("change", function () {
+otherCheckbox.addEventListener(
+    "change",
+    function () {
 
-    if (otherCheckbox.checked) {
+        if (otherCheckbox.checked) {
 
-        // 顯示輸入框
-        otherInput.style.display = "block";
+            // 顯示輸入框
+            otherInput.style.display = "block";
 
-        // 自動把游標放到輸入框
-        otherInput.focus();
-
-    } else {
-
-        // 隱藏輸入框
-        otherInput.style.display = "none";
-
-        // 清空輸入內容
-        otherInput.value = "";
-    }
-
-});
-const urlParams = new URLSearchParams(window.location.search);
-
-const bikeId = urlParams.get("bike");
-
-
-// 找到網頁上的 ID 顯示區域
-const bikeIdElement = document.getElementById("bike-id");
-
-
-// 如果網址有 bike ID
-if (bikeId) {
-
-    bikeIdElement.textContent = bikeId;
-
-} else {
-
-    bikeIdElement.textContent = "找不到腳踏車 ID";
-
-}
-
-
-// ===============================
-// 取得送出按鈕
-// ===============================
-
-const submitButton = document.getElementById("submit-button");
-
-const errorMessage = document.getElementById("error-message");
-
-
-// ===============================
-// 按下確認送出
-// ===============================
-
-submitButton.addEventListener("click", function () {
-
-    // 找出所有被勾選的 checkbox
-    const checkboxes = document.querySelectorAll(
-        'input[type="checkbox"]:checked'
-    );
-
-
-    // 沒有選擇任何項目
-    if (checkboxes.length === 0) {
-
-        errorMessage.textContent =
-            "⚠️ 請至少選擇一項需要報修的零件";
-
-        return;
-    }
-
-
-    // 如果勾選「其他」
-    if (otherCheckbox.checked) {
-
-        // 去除前後空白
-        const otherText =
-            otherInput.value.trim();
-
-
-        // 沒有輸入內容
-        if (otherText === "") {
-
-            errorMessage.textContent =
-                "⚠️ 請輸入「其他」需要報修的項目";
-
+            // 游標移到輸入框
             otherInput.focus();
 
-            return;
+        } else {
+
+            // 隱藏輸入框
+            otherInput.style.display = "none";
+
+            // 清空輸入內容
+            otherInput.value = "";
+
         }
+
     }
+);
 
 
-    // 清除錯誤訊息
-    errorMessage.textContent = "";
+// ========================================
+// 取得送出按鈕
+// ========================================
+
+const submitButton =
+    document.getElementById("submit-button");
+
+const errorMessage =
+    document.getElementById("error-message");
 
 
-    // 儲存報修項目
-    const selectedParts = [];
+// ========================================
+// 報修項目編號
+// ========================================
+
+const issueCodeMap = {
+
+    "輪胎": 1,
+
+    "煞車線": 2,
+
+    "鏈條": 3,
+
+    "車架": 4,
+
+    "座椅": 5,
+
+    "踏板": 6,
+
+    "車輪": 7,
+
+    "車燈": 8,
+
+    "其他": 9
+
+};
 
 
-    checkboxes.forEach(function (checkbox) {
+// ========================================
+// 按下「確認送出」
+// ========================================
 
-        // 如果是「其他」
-        if (checkbox.value === "其他") {
+submitButton.addEventListener(
+    "click",
+    async function () {
+
+        // ----------------------------
+        // ① 檢查 Bike ID
+        // ----------------------------
+
+        if (!bikeId) {
+
+            errorMessage.textContent =
+                "⚠️ 找不到腳踏車 ID";
+
+            return;
+
+        }
+
+
+        // ----------------------------
+        // ② 找出所有勾選項目
+        // ----------------------------
+
+        const checkboxes =
+            document.querySelectorAll(
+                'input[type="checkbox"]:checked'
+            );
+
+
+        // ----------------------------
+        // ③ 沒有勾選任何項目
+        // ----------------------------
+
+        if (checkboxes.length === 0) {
+
+            errorMessage.textContent =
+                "⚠️ 請至少選擇一項需要報修的零件";
+
+            return;
+
+        }
+
+
+        // ----------------------------
+        // ④ 如果勾選「其他」
+        // ----------------------------
+
+        if (otherCheckbox.checked) {
 
             const otherText =
                 otherInput.value.trim();
 
-            selectedParts.push(
-                "其他：" + otherText
-            );
 
-        } else {
+            if (otherText === "") {
 
-            selectedParts.push(
-                checkbox.value
-            );
+                errorMessage.textContent =
+                    "⚠️ 請輸入「其他」需要報修的項目";
+
+                otherInput.focus();
+
+                return;
+
+            }
 
         }
 
-    });
+
+        // ----------------------------
+        // ⑤ 清除錯誤訊息
+        // ----------------------------
+
+        errorMessage.textContent = "";
 
 
-    // 把報修項目組合起來
-    const parts =
-        selectedParts.join(",");
+        // ----------------------------
+        // ⑥ 建立問題編號陣列
+        // ----------------------------
+
+        const issueCodes = [];
 
 
-    // 跳轉到成功頁面
-    window.location.href =
-        "success.html?bike=" +
-        encodeURIComponent(bikeId) +
-        "&parts=" +
-        encodeURIComponent(parts);
+        checkboxes.forEach(
+            function (checkbox) {
 
-});
+                const partName =
+                    checkbox.value;
+
+
+                const code =
+                    issueCodeMap[partName];
+
+
+                if (code) {
+
+                    issueCodes.push(code);
+
+                }
+
+            }
+        );
+
+
+        // ----------------------------
+        // ⑦ 去除重複問題
+        // ----------------------------
+
+        const uniqueIssueCodes =
+            [...new Set(issueCodes)];
+
+
+        // ----------------------------
+        // ⑧ 取得「其他」內容
+        // ----------------------------
+
+        let otherDescription = null;
+
+
+        if (otherCheckbox.checked) {
+
+            otherDescription =
+                otherInput.value.trim();
+
+        }
+
+
+        // ----------------------------
+        // ⑨ 按鈕變成「送出中」
+        // ----------------------------
+
+        submitButton.disabled = true;
+
+        submitButton.textContent =
+            "送出中...";
+
+
+        // ----------------------------
+        // ⑩ 傳送到 Supabase
+        // ----------------------------
+
+        const { data, error } =
+            await supabaseClient.rpc(
+                "submit_repair",
+                {
+                    p_bike_id: bikeId,
+
+                    p_issue_codes:
+                        uniqueIssueCodes,
+
+                    p_other_description:
+                        otherDescription
+                }
+            );
+
+
+        // ----------------------------
+        // ⑪ 判斷是否發生錯誤
+        // ----------------------------
+
+        if (error) {
+
+            console.error(
+                "Supabase 錯誤：",
+                error
+            );
+
+
+            errorMessage.textContent =
+                "⚠️ 報修送出失敗：" +
+                error.message;
+
+
+            submitButton.disabled = false;
+
+            submitButton.textContent =
+                "確認送出";
+
+            return;
+
+        }
+
+
+        // ----------------------------
+        // ⑫ 成功
+        // ----------------------------
+
+        console.log(
+            "報修成功！",
+            data
+        );
+
+
+        // 跳到成功頁面
+        window.location.href =
+            "success.html?bike=" +
+            encodeURIComponent(bikeId) +
+            "&parts=" +
+            encodeURIComponent(
+                checkboxesToText(checkboxes)
+            );
+
+    }
+);
+
+
+// ========================================
+// 把勾選項目轉成文字
+// ========================================
+
+function checkboxesToText(checkboxes) {
+
+    const selectedParts = [];
+
+
+    checkboxes.forEach(
+        function (checkbox) {
+
+            if (checkbox.value === "其他") {
+
+                selectedParts.push(
+                    "其他：" +
+                    otherInput.value.trim()
+                );
+
+            } else {
+
+                selectedParts.push(
+                    checkbox.value
+                );
+
+            }
+
+        }
+    );
+
+
+    return selectedParts.join(",");
+
+}
